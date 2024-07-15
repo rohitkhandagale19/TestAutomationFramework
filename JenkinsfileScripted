@@ -20,10 +20,8 @@ node {
         
         stage('package') {
             // Uncomment the following block to enable package stage
-            /*
             echo 'Building'
-            bat 'mvn clean package'
-            */
+            bat 'mvn clean install'
         }
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
