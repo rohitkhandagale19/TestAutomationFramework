@@ -1,0 +1,19 @@
+node {
+    stage('compile') {
+        echo 'Compiling'
+        bat 'mvn compile'
+    }
+    
+    stage('build') {
+        echo 'Building and testing'
+        bat 'mvn clean test'
+    }
+    
+    try {
+        echo 'Pipeline succeeded! Archiving artifacts...'
+        archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
+    } finally {
+        echo 'Pipeline finished!'
+        // Optionally, perform cleanup or notification tasks here
+    }
+}
