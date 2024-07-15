@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
- /* stage('build') {
+ /* stage('package') {
             steps {
                 echo 'Building'
                 bat 'mvn clean package'
