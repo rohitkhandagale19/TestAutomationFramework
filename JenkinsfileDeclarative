@@ -21,7 +21,7 @@ pipeline {
         success {
             echo 'Pipeline succeeded! Archiving artifacts...'
             // Adjust artifact path based on actual filename and location
-            archiveArtifacts 'target/test.txt'
+          archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
         }
         
         always {
