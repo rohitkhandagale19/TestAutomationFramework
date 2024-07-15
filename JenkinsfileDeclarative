@@ -2,6 +2,15 @@ pipeline {
     agent any
     
     stages {
+        stage('checkout') {
+            steps {
+                echo 'Checking out !!'
+                script {
+                    git 'https://github.com/rohitkhandagale19/TestAutomationFramework.git'
+                }
+            }
+        }
+        
         stage('compile') {
             steps {
                 echo 'Compiling'
@@ -20,13 +29,12 @@ pipeline {
     post {
         success {
             echo 'Pipeline succeeded! Archiving artifacts...'
-            // Adjust artifact path based on actual filename and location
-          archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
+            archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
         }
         
         always {
             echo 'Pipeline finished!'
-            // Optionally, you can perform cleanup or notification tasks
+            // Optionally, perform cleanup or notification tasks here
         }
     }
 }
