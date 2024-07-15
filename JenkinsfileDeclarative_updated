@@ -39,12 +39,13 @@ pipeline {
         success {
             echo 'Pipeline succeeded! Archiving artifacts...'
             archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
+            archiveArtifacts artifacts: '**/target/surefire-reports/*.xml', followSymlinks: false
         }
         
-        always {
+     /*   always {
             echo 'Pipeline finished!'
             step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/*.xml', skipPublishingChecks: true])
             // Optionally, perform cleanup or notification tasks here
-        }
+        } */
     }
 }
