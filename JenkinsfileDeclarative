@@ -2,14 +2,14 @@ pipeline {
     agent any
     
     stages {
-        stage('checkout') {
+        /*stage('checkout') {
             steps {
                 echo 'Checking out !!'
                 script {
                     git 'https://github.com/rohitkhandagale19/TestAutomationFramework.git'
                 }
             }
-        }
+        }*/
         
         stage('compile') {
             steps {
