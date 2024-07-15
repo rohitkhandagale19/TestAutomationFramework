@@ -18,12 +18,7 @@ pipeline {
             }
         }
         
-       /* stage('build') {
-            steps {
-                echo 'Building'
-                bat 'mvn clean package'
-            }
-        } */
+      
         
         stage('test') {
             steps {
@@ -31,6 +26,13 @@ pipeline {
                 bat 'mvn test'
             }
         }
+
+ /* stage('build') {
+            steps {
+                echo 'Building'
+                bat 'mvn clean package'
+            }
+        } */
     }
     
     post {
