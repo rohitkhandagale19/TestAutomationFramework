@@ -1,0 +1,48 @@
+node {
+    // Checkout stage
+    /* stage('checkout') {
+        echo 'Checking out !!'
+        git 'https://github.com/rohitkhandagale19/TestAutomationFramework.git'
+    } */
+
+    // Compile stage
+    stage('compile') {
+        echo 'Compiling'
+        bat 'mvn compile'
+    }
+
+    // Test stage
+    stage('test') {
+        echo 'Testing'
+        bat 'mvn test'
+    }
+
+    // Package stage (commented out)
+    /* stage('package') {
+        echo 'Building'
+        bat 'mvn clean package'
+    } */
+
+    // Post-build actions
+    post {
+        success {
+            echo 'Pipeline succeeded! Archiving artifacts...'
+            archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
+            archiveArtifacts artifacts: '**/target/surefire-reports/*.xml', followSymlinks: false
+            
+            // Publish HTML report
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'target/surefire-reports',
+                reportFiles: 'emailable-report.html',
+                reportName: 'Test Automation Report'
+            ])
+        }
+        
+        always {
+            echo 'Pipeline finished!'
+        }
+    }
+}
