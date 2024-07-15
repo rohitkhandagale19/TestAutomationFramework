@@ -4,16 +4,30 @@ node {
         bat 'mvn compile'
     }
     
-    stage('build') {
-        echo 'Building and testing'
-        bat 'mvn clean test'
+    stage('test') {
+        echo 'Testing'
+        bat 'mvn test'
     }
-    
-    try {
-        echo 'Pipeline succeeded! Archiving artifacts...'
-        archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
-    } finally {
-        echo 'Pipeline finished!'
-        // Optionally, perform cleanup or notification tasks here
+
+    stage('post') {
+        success {
+            echo 'Pipeline succeeded! Archiving artifacts...'
+            archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
+            archiveArtifacts artifacts: '**/target/surefire-reports/*.xml', followSymlinks: false
+            
+            // Publish HTML report
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'target/surefire-reports',
+                reportFiles: 'emailable-report.html',
+                reportName: 'Test Automation Report'
+            ])
+        }
+        
+        always {
+            echo 'Pipeline finished!'
+        }
     }
 }
