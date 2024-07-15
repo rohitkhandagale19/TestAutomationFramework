@@ -1,39 +1,35 @@
 node {
-    stage('checkout') {
-        echo 'Checking out !!'
-        git 'https://github.com/rohitkhandagale19/TestAutomationFramework.git'
-    }
-
-    stage('build') {
-        echo 'Building out !!'
-        def mvnHome = 'C:\\Users\\rohit_khandagale\\Downloads\\apache-maven-3.9.8-bin\\apache-maven-3.9.8'
-        def mavenCmd = "${mvnHome}\\bin\\mvn"
-        env.PATH = "${mvnHome}\\bin;c:\\Windows\\System32;${env.PATH}"
-
-        bat script: "${mavenCmd} clean package", label: 'Building with Maven'
-    }
-
-    stage('compile') {
-        echo 'Compiling'
-        def mvnHome = 'C:\\Users\\rohit_khandagale\\Downloads\\apache-maven-3.9.8-bin\\apache-maven-3.9.8'
-        def mavenCmd = "${mvnHome}\\bin\\mvn"
-        bat script: "${mavenCmd} compile", label: 'Compiling with Maven'
-    }
-    
-    stage('test') {
-        echo 'Testing'
-        def mvnHome = 'C:\\Users\\rohit_khandagale\\Downloads\\apache-maven-3.9.8-bin\\apache-maven-3.9.8'
-        def mavenCmd = "${mvnHome}\\bin\\mvn"
-        bat script: "${mavenCmd} test", label: 'Testing with Maven'
-    }
-
-    stage('archiving') {
-        echo 'Archiving out !!'
-        archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
-    }
-
-    post {
-        success {
+    try {
+        stage('checkout') {
+            // Uncomment the following block to enable checkout stage
+            /* 
+            echo 'Checking out !!'
+            git 'https://github.com/rohitkhandagale19/TestAutomationFramework.git'
+            */
+        }
+        
+        stage('compile') {
+            echo 'Compiling'
+            bat 'mvn compile'
+        }
+        
+        stage('test') {
+            echo 'Testing'
+            bat 'mvn test'
+        }
+        
+        stage('package') {
+            // Uncomment the following block to enable package stage
+            /*
+            echo 'Building'
+            bat 'mvn clean package'
+            */
+        }
+    } catch (Exception e) {
+        currentBuild.result = 'FAILURE'
+        throw e
+    } finally {
+        if (currentBuild.result == 'SUCCESS') {
             echo 'Pipeline succeeded! Archiving artifacts...'
             archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
             archiveArtifacts artifacts: '**/target/surefire-reports/*.xml', followSymlinks: false
@@ -49,9 +45,6 @@ node {
             ])
         }
         
-        always {
-            echo 'Pipeline finished!'
-            junit '**/target/surefire-reports/*.xml'
-        }
+        echo 'Pipeline finished!'
     }
 }
