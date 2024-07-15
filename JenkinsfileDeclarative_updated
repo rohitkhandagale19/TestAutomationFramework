@@ -18,12 +18,12 @@ pipeline {
             }
         }
         
-        stage('build') {
+       /* stage('build') {
             steps {
                 echo 'Building'
                 bat 'mvn clean package'
             }
-        }
+        } */
         
         stage('test') {
             steps {
