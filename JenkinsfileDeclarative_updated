@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+    
+    stages {
+        /*stage('checkout') {
+            steps {
+                echo 'Checking out !!'
+                script {
+                    git 'https://github.com/rohitkhandagale19/TestAutomationFramework.git'
+                }
+            }
+        }*/
+        
+        stage('compile') {
+            steps {
+                echo 'Compiling'
+                bat 'mvn compile'
+            }
+        }
+        
+        stage('build') {
+            steps {
+                echo 'Building'
+                bat 'mvn clean package'
+            }
+        }
+        
+        stage('test') {
+            steps {
+                echo 'Testing'
+                bat 'mvn test'
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline succeeded! Archiving artifacts...'
+            archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
+        }
+        
+        always {
+            echo 'Pipeline finished!'
+            step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/*.xml'])
+            // Optionally, perform cleanup or notification tasks here
+        }
+    }
+}
