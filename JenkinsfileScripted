@@ -1,29 +1,38 @@
 node {
-    stage('setup') {
-        echo 'Setting up Maven environment'
+    stage('checkout') {
+        echo 'Checking out !!'
+        git 'https://github.com/rohitkhandagale19/TestAutomationFramework.git'
+    }
+
+    stage('build') {
         echo 'Building out !!'
         def mvnHome = 'C:\\Users\\rohit_khandagale\\Downloads\\apache-maven-3.9.8-bin\\apache-maven-3.9.8'
         def mavenCmd = "${mvnHome}\\bin\\mvn"
         env.PATH = "${mvnHome}\\bin;c:\\Windows\\System32;${env.PATH}"
-        echo "Maven home set to ${mvnHome}"
+
+        bat script: "${mavenCmd} clean package", label: 'Building with Maven'
     }
 
     stage('compile') {
         echo 'Compiling'
+        def mvnHome = 'C:\\Users\\rohit_khandagale\\Downloads\\apache-maven-3.9.8-bin\\apache-maven-3.9.8'
+        def mavenCmd = "${mvnHome}\\bin\\mvn"
         bat script: "${mavenCmd} compile", label: 'Compiling with Maven'
     }
     
     stage('test') {
         echo 'Testing'
+        def mvnHome = 'C:\\Users\\rohit_khandagale\\Downloads\\apache-maven-3.9.8-bin\\apache-maven-3.9.8'
+        def mavenCmd = "${mvnHome}\\bin\\mvn"
         bat script: "${mavenCmd} test", label: 'Testing with Maven'
     }
 
-    stage('build') {
-        echo 'Building out !!'
-        bat script: "${mavenCmd} clean package", label: 'Building with Maven'
+    stage('archiving') {
+        echo 'Archiving out !!'
+        archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
     }
 
-    stage('post') {
+    post {
         success {
             echo 'Pipeline succeeded! Archiving artifacts...'
             archiveArtifacts artifacts: 'target/surefire-reports/emailable-report.html', followSymlinks: false
@@ -42,6 +51,7 @@ node {
         
         always {
             echo 'Pipeline finished!'
+            junit '**/target/surefire-reports/*.xml'
         }
     }
 }
