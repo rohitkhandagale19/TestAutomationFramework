@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('compile') {
+            steps {
+                echo 'Compiling'
+                bat 'mvn compile'
+            }
+        }
+        
+        stage('test') {
+            steps {
+                echo 'Testing'
+                bat 'mvn clean test'
+            }
+            
+            post {
+                success {
+                    script {
+                        // Generate Allure report
+                        bat "allure generate ${env.WORKSPACE}/target/allure-results -o ${env.WORKSPACE}/target/allure-reports"
+                        
+                        // Archive Allure report artifacts
+                        archiveArtifacts artifacts: 'target/allure-reports/**', followSymlinks: false
+                        
+                        // Publish HTML report using Allure plugin
+                        allure([
+                            includeProperties: false,
+                            jdk: '',
+                            properties: [],
+                            reportBuildPolicy: 'ALWAYS',
+                            results: [[path: 'target/allure-results']]
+                        ])
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo 'Pipeline finished!'
+        } 
+    }
+}
