@@ -1,5 +1,5 @@
 node {
-     Checkout stage
+    // Checkout stage
      stage('checkout') {
         echo 'Checking out !!'
         git 'https://github.com/rohitkhandagale19/TestAutomationFramework.git'
