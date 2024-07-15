@@ -1,9 +1,9 @@
 node {
     // Checkout stage
-     stage('checkout') {
+   /*  stage('checkout') {
         echo 'Checking out !!'
         git 'https://github.com/rohitkhandagale19/TestAutomationFramework.git'
-    } 
+    } */
 
     // Compile stage
     stage('compile') {
